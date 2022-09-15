@@ -18,5 +18,9 @@ add_executable(robot
 # pull in common dependencies
 target_link_libraries(robot pico_stdlib)
 
+# enable usb output, disable uart output
+pico_enable_stdio_usb(robot 1)
+pico_enable_stdio_uart(robot 0)
+
 # create map/bin/hex file etc.
 pico_add_extra_outputs(robot)
