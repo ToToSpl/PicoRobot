@@ -42,7 +42,7 @@ inline void encoder_update_math(struct Encoder *encoder, int32_t fetch_count) {
   float dt = 0.000001f * (float)(now - encoder->last_updated_us);
   encoder->last_updated_us = now;
 
-  encoder->speed = delta_m * dt;
+  encoder->speed = delta_m / dt;
 }
 
 void encoder_update(struct Encoder *encoder) {
