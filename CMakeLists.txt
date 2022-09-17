@@ -18,7 +18,7 @@ add_executable(robot
 
 pico_generate_pio_header(robot ${CMAKE_CURRENT_LIST_DIR}/src/quadrature_encoder.pio)
 
-target_sources(robot PRIVATE src/main.c src/encoder.c)
+target_sources(robot PRIVATE src/main.c src/encoder.c src/motor_controller.c)
 
 # pull in common dependencies
 target_link_libraries(robot pico_stdlib hardware_pio hardware_pwm)
