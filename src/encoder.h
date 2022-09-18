@@ -3,6 +3,8 @@
 
 #include "hardware/pio.h"
 
+#define ENCODER_MAX_RES 0.00023f
+
 struct Encoder {
   PIO pio;
   uint sm;

@@ -5,12 +5,11 @@
 #define PWM_WRAP UINT8_MAX
 #define PWM_CLK_DIV 128.f
 
-#define PID_K 500.f
-#define PID_P 1.0f
-#define PID_I 0.05f
-#define PID_D 0.05f
+#define PID_P 600.0f
+#define PID_I 6.0f
 
-// #define PID_D_ENABLE
+#define MIN_POWER 10.f
+
 
 void motor_contr_init(struct MotorController *motor_contr,
                       struct Encoder *encoder, uint pin_a, uint pin_b,
@@ -32,6 +31,12 @@ void motor_contr_init(struct MotorController *motor_contr,
   motor_contr->pwm_slice_num = slice_num;
   motor_contr->last_updated = time_us_64();
   motor_contr->curr_ab = 1;
+  motor_contr->err_prev = 0.f;
+  motor_contr->err_int = 0.f;
+  motor_contr->target_spd = 0.f;
+   
+  pwm_set_gpio_level(motor_contr->motor_a_pin, 0);
+  pwm_set_gpio_level(motor_contr->motor_b_pin, 0);
 }
 
 void motor_contr_set_spd(struct MotorController *motor_contr,
@@ -43,25 +48,25 @@ void motor_contr_update(struct MotorController *motor_contr) {
   uint64_t now = time_us_64();
   float dt = 0.000001f * (float)(now - motor_contr->last_updated);
   float err = motor_contr->target_spd - motor_contr->enc->speed;
-  err = -err;
+  err = 0.7f * err + 0.3f * motor_contr->err_prev;
 
-#ifdef PID_D_ENABLE
   float d = (err - motor_contr->err_prev) / dt;
-#endif
   motor_contr->err_prev = err;
 
   motor_contr->err_int += err * dt;
   float i = motor_contr->err_int;
 
-#ifdef PID_D_ENABLE
-  float out = PID_K * (PID_P * err + PID_I * i + PID_D * d);
-#else
-  float out = PID_K * (PID_P * err + PID_I * i);
-#endif
+  float out = PID_P * err + PID_I * i;
+
+  if (out > -MIN_POWER && out < MIN_POWER)
+    out = 0.f;
+
   if (out > 255.f)
     out = 255.f;
   else if (out < -255.f)
     out = -255.f;
+
+  out *= motor_contr->dir;
 
   if (out >= 0.f) {
     if (motor_contr->curr_ab == 0) {
@@ -79,6 +84,4 @@ void motor_contr_update(struct MotorController *motor_contr) {
 
     pwm_set_gpio_level(motor_contr->motor_b_pin, (uint16_t)(-out));
   }
-
-  printf("%f\t", out);
 }
