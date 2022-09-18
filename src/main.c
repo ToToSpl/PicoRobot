@@ -14,43 +14,44 @@ int main() {
 
   stdio_init_all();
 
-  gpio_init(PICO_DEFAULT_LED_PIN);
-  gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-  bool led_state = 1;
-
   struct Encoder encoder;
 
   uint pio_offset = encoder_create_pio_program(pio0);
-  encoder_init(&encoder, pio0, 0, MOTOR_LEFT_ENCODER_1, 1, pio_offset);
+  encoder_init(&encoder, pio0, 0, MOTOR_LEFT_ENCODER_1, 0, pio_offset);
 
   struct MotorController motor_left;
   motor_contr_init(&motor_left, &encoder, MOTOR_LEFT_PIN_A, MOTOR_LEFT_PIN_B,
-                   1);
-  motor_contr_set_spd(&motor_left, 0.f);
+                   1); // direction reversed due to wiring
 
-  uint8_t cnt = 0;
-  int8_t dir = 1;
+  uint16_t cnt = 0;
+  float dir = 0.01f;
   float spd = 0.05f;
 
   while (1) {
     encoder_update(&encoder);
 
-    if (cnt == 0 || cnt == 128) {
-      spd = -spd;
-      dir = -dir;
+/*
+    if (cnt >= 100) {
+      cnt = 0;
+      if (spd < -0.05f || spd > 0.05f) {
+        dir = -dir;
+      }
+      spd += dir;
       motor_contr_set_spd(&motor_left, spd);
     }
-    cnt += dir;
+  */
+    if(cnt == 200) {
+      cnt = 0;
+      spd = -spd;
+      motor_contr_set_spd(&motor_left, spd);
+    }
+    cnt++;
 
     motor_contr_update(&motor_left);
 
-    printf("position %7.4f m, speed %7.4f m/s, err %7.4f\n", encoder.distance,
-           encoder.speed, motor_left.err_prev);
+    printf("%.8f %.8f %.8f\n", spd, encoder.speed, motor_left.err_prev);
 
-    gpio_put(PICO_DEFAULT_LED_PIN, led_state);
-    led_state = !led_state;
-
-    sleep_ms(20);
+    sleep_ms(10);
   }
 
   return 0;
