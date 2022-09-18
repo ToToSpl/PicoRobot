@@ -25,26 +25,28 @@ int main() {
 
   uint16_t cnt = 0;
   float dir = 0.01f;
-  float spd = 0.05f;
+  float spd = 0.0f;
+  motor_contr_set_spd(&motor_left, spd);
 
   while (1) {
     encoder_update(&encoder);
 
-/*
-    if (cnt >= 100) {
+    if (cnt >= 30) {
       cnt = 0;
-      if (spd < -0.05f || spd > 0.05f) {
+      if (spd < -0.25f || spd > 0.25f) {
         dir = -dir;
       }
       spd += dir;
       motor_contr_set_spd(&motor_left, spd);
     }
-  */
-    if(cnt == 200) {
+
+    /*
+    if(cnt == 100) {
       cnt = 0;
       spd = -spd;
       motor_contr_set_spd(&motor_left, spd);
     }
+    */
     cnt++;
 
     motor_contr_update(&motor_left);

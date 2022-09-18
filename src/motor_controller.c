@@ -5,8 +5,10 @@
 #define PWM_WRAP UINT8_MAX
 #define PWM_CLK_DIV 128.f
 
-#define PID_P 600.0f
-#define PID_I 6.0f
+#define PID_K 800.0f
+#define PID_P 1.0f
+#define PID_I 8.0f
+#define PID_D 0.005f
 
 #define MIN_POWER 10.f
 
@@ -47,6 +49,8 @@ void motor_contr_set_spd(struct MotorController *motor_contr,
 void motor_contr_update(struct MotorController *motor_contr) {
   uint64_t now = time_us_64();
   float dt = 0.000001f * (float)(now - motor_contr->last_updated);
+  motor_contr->last_updated = now;
+
   float err = motor_contr->target_spd - motor_contr->enc->speed;
   err = 0.7f * err + 0.3f * motor_contr->err_prev;
 
@@ -56,7 +60,7 @@ void motor_contr_update(struct MotorController *motor_contr) {
   motor_contr->err_int += err * dt;
   float i = motor_contr->err_int;
 
-  float out = PID_P * err + PID_I * i;
+  float out = PID_K * (PID_P * err + PID_I * i + PID_D * d);
 
   if (out > -MIN_POWER && out < MIN_POWER)
     out = 0.f;
