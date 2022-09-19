@@ -18,10 +18,10 @@ add_executable(robot
 
 pico_generate_pio_header(robot ${CMAKE_CURRENT_LIST_DIR}/src/quadrature_encoder.pio)
 
-target_sources(robot PRIVATE src/main.c src/encoder.c src/motor_controller.c)
+target_sources(robot PRIVATE src/main.c src/encoder.c src/motor_controller.c src/optical_sensor.c)
 
 # pull in common dependencies
-target_link_libraries(robot pico_stdlib hardware_pio hardware_pwm)
+target_link_libraries(robot pico_stdlib hardware_pio hardware_pwm hardware_adc)
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(robot 1)
