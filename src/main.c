@@ -17,9 +17,12 @@ int main() {
   stdio_init_all();
   adc_init();
 
-  struct OpticalSensor bumperL;
+  // struct OpticalSensor bumperL;
 
-  optical_sensor_init(&bumperL, GPIO_ADC_FIRST, BUMPER_SENS_THRESH, true);
+  // optical_sensor_init(&bumperL, GPIO_ADC_FIRST, BUMPER_SENS_THRESH, true);
+  
+  struct BumperSensor bumperL;
+  bumper_sensor_init(&bumperL, 26, 0);
 
   struct Encoder encoder;
 
@@ -38,7 +41,8 @@ int main() {
   while (1) {
     encoder_update(&encoder);
 
-    bool trig = optical_sensor_measure(&bumperL);
+    // bool trig = optical_sensor_measure(&bumperL);
+    bool trig = bumper_sensor_measure(&bumperL);
     if (trig)
       printf("Bumped!\n");
     else
