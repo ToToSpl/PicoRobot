@@ -11,25 +11,25 @@
 #define GPIO_ADC_SECOND 27
 #define GPIO_ADC_THIRD 28
 
-struct OpticalSensor {
+typedef struct OpticalSensor {
   uint pin;
   uint offset;
   bool reversed;
   float threshold;
-};
+} OpticalSensor;
 
-void optical_sensor_init(struct OpticalSensor *optical, uint pin,
-                         float threshold, bool reversed);
+void optical_sensor_init(OpticalSensor *optical, uint pin, float threshold,
+                         bool reversed);
 
-bool optical_sensor_measure(struct OpticalSensor *optical);
+bool optical_sensor_measure(OpticalSensor *optical);
 
-struct BumperSensor {
+typedef struct BumperSensor {
   uint pin;
   bool reversed;
-};
+} BumperSensor;
 
-void bumper_sensor_init(struct BumperSensor *bumper, uint pin, bool reversed);
+void bumper_sensor_init(BumperSensor *bumper, uint pin, bool reversed);
 
-bool bumper_sensor_measure(struct BumperSensor *bumper);
+bool bumper_sensor_measure(BumperSensor *bumper);
 
 #endif

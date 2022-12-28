@@ -1,8 +1,8 @@
 #include "optical_sensor.h"
 #include "hardware/gpio.h"
 
-void optical_sensor_init(struct OpticalSensor *optical, uint pin,
-                         float threshold, bool reversed) {
+void optical_sensor_init(OpticalSensor *optical, uint pin, float threshold,
+                         bool reversed) {
   adc_gpio_init(pin);
   uint offset = pin - GPIO_ADC_FIRST;
 
@@ -12,7 +12,7 @@ void optical_sensor_init(struct OpticalSensor *optical, uint pin,
   optical->reversed = reversed;
 }
 
-bool optical_sensor_measure(struct OpticalSensor *optical) {
+bool optical_sensor_measure(OpticalSensor *optical) {
   static uint current_offset = 0;
   static const float conversion_factor = 3.3f / (1 << 12);
 
@@ -27,7 +27,7 @@ bool optical_sensor_measure(struct OpticalSensor *optical) {
   return trigger ^ optical->reversed;
 }
 
-void bumper_sensor_init(struct BumperSensor *bumper, uint pin, bool reversed) {
+void bumper_sensor_init(BumperSensor *bumper, uint pin, bool reversed) {
   gpio_init(pin);
   gpio_set_dir(pin, GPIO_IN);
   gpio_set_pulls(pin, false, true);
@@ -36,7 +36,7 @@ void bumper_sensor_init(struct BumperSensor *bumper, uint pin, bool reversed) {
   bumper->reversed = !reversed;
 }
 
-bool bumper_sensor_measure(struct BumperSensor *bumper) {
+bool bumper_sensor_measure(BumperSensor *bumper) {
   bool measure = gpio_get(bumper->pin);
   return measure ^ bumper->reversed;
 }

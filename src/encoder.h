@@ -5,7 +5,7 @@
 
 #define ENCODER_MAX_RES 0.00023f
 
-struct Encoder {
+typedef struct Encoder {
   PIO pio;
   uint sm;
   int taken_steps;
@@ -13,16 +13,16 @@ struct Encoder {
   float speed;
   float dir;
   uint64_t last_updated_us;
-};
+} Encoder;
 
 uint encoder_create_pio_program(PIO pio);
 
 // second encoder must be at the next gpio port
-void encoder_init(struct Encoder *encoder, PIO pio, uint sm,
-                  uint first_sens_pin, bool direction, uint prog_offset);
-void encoder_update(struct Encoder *encoder);
+void encoder_init(Encoder *encoder, PIO pio, uint sm, uint first_sens_pin,
+                  bool direction, uint prog_offset);
+void encoder_update(Encoder *encoder);
 
 // shorter wait for data fetching
-void encoder_update_two(struct Encoder *enc1, struct Encoder *enc2);
+void encoder_update_two(Encoder *enc1, Encoder *enc2);
 
 #endif
