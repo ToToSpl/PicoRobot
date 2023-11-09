@@ -15,11 +15,11 @@ typedef struct MotorController {
   bool curr_ab;
 } MotorController;
 
-void motor_contr_init(MotorController *motor_contr, Encoder *encoder,
-                      uint pin_a, uint pin_b, bool direction);
+void motor_ctrl_init(MotorController *motor_contr, Encoder *encoder, uint pin_a,
+                     uint pin_b, bool direction);
 
-void motor_contr_set_spd(MotorController *motor_contr, float target_spd);
+void motor_ctrl_set_spd(MotorController *motor_contr, float target_spd);
 
-void motor_contr_update(MotorController *motor_contr);
+void motor_ctrl_update(MotorController *motor_contr);
 
 #endif

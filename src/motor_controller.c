@@ -12,8 +12,8 @@
 
 #define MIN_POWER 10.f
 
-void motor_contr_init(MotorController *motor_contr, Encoder *encoder,
-                      uint pin_a, uint pin_b, bool direction) {
+void motor_ctrl_init(MotorController *motor_contr, Encoder *encoder, uint pin_a,
+                     uint pin_b, bool direction) {
   gpio_set_function(pin_a, GPIO_FUNC_PWM);
   gpio_set_function(pin_b, GPIO_FUNC_PWM);
 
@@ -39,11 +39,11 @@ void motor_contr_init(MotorController *motor_contr, Encoder *encoder,
   pwm_set_gpio_level(motor_contr->motor_b_pin, 0);
 }
 
-void motor_contr_set_spd(MotorController *motor_contr, float target_spd) {
+void motor_ctrl_set_spd(MotorController *motor_contr, float target_spd) {
   motor_contr->target_spd = motor_contr->dir * target_spd;
 }
 
-void motor_contr_update(MotorController *motor_contr) {
+void motor_ctrl_update(MotorController *motor_contr) {
   uint64_t now = time_us_64();
   float dt = 0.000001f * (float)(now - motor_contr->last_updated);
   motor_contr->last_updated = now;

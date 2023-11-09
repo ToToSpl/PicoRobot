@@ -1,4 +1,6 @@
 #include "hardware/pwm.h"
+#include "hardware/uart.h"
+#include "pico/stdio.h"
 #include "pico/stdlib.h"
 #include <stdio.h>
 
@@ -28,21 +30,26 @@ int main() {
   encoder_init(&encoderR, pio0, 0, MOTOR_RIGHT_ENCODER_1, 1, pio_offset);
 
   MotorController motor_left, motor_right;
-  motor_contr_init(&motor_left, &encoderL, MOTOR_LEFT_PIN_A, MOTOR_LEFT_PIN_B,
-                   1);
+  motor_ctrl_init(&motor_left, &encoderL, MOTOR_LEFT_PIN_A, MOTOR_LEFT_PIN_B,
+                  1);
 
-  motor_contr_init(&motor_right, &encoderR, MOTOR_RIGHT_PIN_A,
-                   MOTOR_RIGHT_PIN_B, 1);
+  motor_ctrl_init(&motor_right, &encoderR, MOTOR_RIGHT_PIN_A, MOTOR_RIGHT_PIN_B,
+                  1);
   uint16_t cnt = 0;
   float dir = 0.01f;
   float spd = 0.0f;
-  motor_contr_set_spd(&motor_left, spd);
-  motor_contr_set_spd(&motor_right, spd);
+  motor_ctrl_set_spd(&motor_left, spd);
+  motor_ctrl_set_spd(&motor_right, spd);
+
+  char *data = "Hello!";
 
   while (1) {
     encoder_update(&encoderL);
     encoder_update(&encoderR);
 
+    // uart_write_blocking(uart0, data, 8);
+
+    puts_raw("Hello world");
     printf("\n\
         BUMPER_L:\t%d\n\
         BUMPER_R:\t%d\n\
@@ -64,13 +71,13 @@ int main() {
         dir = -dir;
       }
       spd += dir;
-      motor_contr_set_spd(&motor_left, -spd);
-      motor_contr_set_spd(&motor_right, spd);
+      motor_ctrl_set_spd(&motor_left, -spd);
+      motor_ctrl_set_spd(&motor_right, spd);
     }
     cnt++;
 
-    motor_contr_update(&motor_left);
-    motor_contr_update(&motor_right);
+    motor_ctrl_update(&motor_left);
+    motor_ctrl_update(&motor_right);
 
     sleep_ms(10);
   }
