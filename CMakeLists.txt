@@ -20,7 +20,7 @@ target_sources(robot PRIVATE src/main.c src/encoder.c src/motor_controller.c
                              src/optical_sensor.c)
 
 # pull in common dependencies
-target_link_libraries(robot pico_stdlib hardware_pio hardware_pwm hardware_adc)
+target_link_libraries(robot pico_stdlib pico_multicore hardware_pio hardware_pwm hardware_adc)
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(robot 1)
